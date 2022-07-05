@@ -1,47 +1,41 @@
 import React from 'react';
 import { RectButtonProps } from 'react-native-gesture-handler';
 
-import GasolineSvg from '../../assets/gasoline.svg';
+import { CarDTO } from '../../dtos/CarDTO';
+import { getAccessoryIcon } from '../../utils/getAccessoryIcon';
 
 import * as S from './styles';
 
 interface ICarProps extends RectButtonProps {
-  brand: string;
-  name: string;
-  rent: {
-    period: string;
-    price: number;
-  }
-  thumbnail: string
+  data: CarDTO
 }
 
 export const Car: React.FC<ICarProps> = ({
-  brand,
-  name,
-  rent,
-  thumbnail,
+  data,
   ...rest
 }): JSX.Element => {
+  const MotorIcon = getAccessoryIcon(data.fuel_type)
+
   return (
     <S.Container {...rest}>
       <S.Details>
-        <S.Brand>{brand}</S.Brand>
-        <S.Name>{name}</S.Name>
+        <S.Brand>{data.brand}</S.Brand>
+        <S.Name>{data.name}</S.Name>
 
         <S.About>
           <S.Rent>
-            <S.Period>{rent.period}</S.Period>
-            <S.Price>R$ {rent.price}</S.Price>
+            <S.Period>{data.rent.period}</S.Period>
+            <S.Price>R$ {data.rent.price}</S.Price>
           </S.Rent>
 
           <S.Type>
-            <GasolineSvg />
+            <MotorIcon />
           </S.Type>
         </S.About>
       </S.Details>
 
       <S.CarImage
-        source={{ uri: thumbnail }}
+        source={{ uri: data.thumbnail }}
         resizeMode='contain'
       />
 

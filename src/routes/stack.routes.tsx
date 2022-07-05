@@ -6,8 +6,19 @@ import { CarDetails } from '../screens/CarDetails';
 import { Scheduling } from '../screens/Scheduling';
 import { SchedulingDetails } from '../screens/SchedulingDetails';
 import { SchedulingComplete } from '../screens/SchedulingComplete';
+import { CarDTO } from '../dtos/CarDTO';
+import { MyCars } from '../screens/MyCars';
 
-const { Navigator, Screen } = createStackNavigator()
+export type IRoutesParams = {
+  Home: undefined
+  CarDetails: { car: CarDTO }
+  Scheduling: { car: CarDTO }
+  SchedulingDetails: { car: CarDTO, dates: string[] }
+  SchedulingComplete: undefined
+  MyCars: undefined
+}
+
+const { Navigator, Screen } = createStackNavigator<IRoutesParams>()
 
 export const StackRoutes: React.FC = (): JSX.Element => {
   return (
@@ -39,6 +50,11 @@ export const StackRoutes: React.FC = (): JSX.Element => {
       <Screen
         name='SchedulingComplete'
         component={SchedulingComplete}
+      />
+
+      <Screen
+        name='MyCars'
+        component={MyCars}
       />
     </Navigator>
   )

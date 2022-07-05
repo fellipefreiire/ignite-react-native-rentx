@@ -1,42 +1,85 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Feather } from '@expo/vector-icons'
 import { Accessory } from '../../components/Accessory';
 import { BackButton } from '../../components/BackButton';
 import { ImageSlider } from '../../components/ImageSlider';
 
-import speedSvg from '../../assets/speed.svg'
-import accelerationSvg from '../../assets/acceleration.svg'
-import forceSvg from '../../assets/force.svg'
-import gasolineSvg from '../../assets/gasoline.svg'
-import exchangeSvg from '../../assets/exchange.svg'
-import peopleSvg from '../../assets/people.svg'
-
 import * as S from './styles'
 import { Button } from '../../components/Button';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useTheme } from 'styled-components';
-import { useNavigation } from '@react-navigation/native';
+import { StackScreenProps } from '@react-navigation/stack';
+import { IRoutesParams } from '../../routes/stack.routes';
+import { Alert, StatusBar } from 'react-native';
+import { getAccessoryIcon } from '../../utils/getAccessoryIcon';
+import { format } from 'date-fns';
+import { getPlatformDate } from '../../utils/getPlatformDate';
+import { api } from '../../services/api';
 
-export const SchedulingDetails: React.FC = () => {
+type Props = StackScreenProps<IRoutesParams, 'SchedulingDetails'>;
+
+export const SchedulingDetails: React.FC<Props> = ({ navigation, route }) => {
+  const [loading, setLoading] = useState(false)
   const { colors } = useTheme()
 
-  const { navigate } = useNavigation()
+  const { car, dates } = route.params
 
-  const handleConfirmRental = () => {
-    navigate('SchedulingComplete')
+  const rentalTotal = Number(dates.length * car.rent.price)
+  const startDate = format(getPlatformDate(new Date(dates[0])), 'dd/MM/yyyy')
+  const endDate = format(getPlatformDate(new Date(dates[dates.length - 1])), 'dd/MM/yyyy')
+
+  const handleConfirmRental = async () => {
+    setLoading(true)
+
+    const schedulesByCar = await api.get(`/schedules_bycars/${car.id}`)
+
+    const unavailable_dates = [
+      ...schedulesByCar.data.unavailable_dates,
+      ...dates,
+    ]
+
+    try {
+      await api.post(`/schedules_byuser`, {
+        user_id: 1,
+        car,
+        startDate,
+        endDate
+      })
+    } catch (err) {
+      console.log(err)
+    }
+
+    try {
+      await api.put(`/schedules_bycars/${car.id}`, {
+        id: car.id,
+        unavailable_dates
+      })
+
+    } catch (err) {
+      setLoading(false)
+      Alert.alert('Não foi possível confirmar o agendamento.')
+    }
+    navigation.navigate('SchedulingComplete')
+
+  }
+
+  const handleBack = () => {
+    navigation.goBack()
   }
 
   return (
     <S.Container>
+      <StatusBar
+        barStyle='dark-content'
+        translucent
+        backgroundColor='transparent'
+      />
       <S.Header>
-        <BackButton onPress={() => { }} />
+        <BackButton onPress={handleBack} />
       </S.Header>
 
       <S.CarImages>
-        <ImageSlider imagesUrl={[
-          'https://www.pngmart.com/files/1/Audi-RS5-Red-PNG.png',
-          'https://www.pngkit.com/png/full/237-2375888_porsche-panamera-s.png',
-        ]} />
+        <ImageSlider imagesUrl={car.photos} />
       </S.CarImages>
 
       <S.Content
@@ -44,23 +87,26 @@ export const SchedulingDetails: React.FC = () => {
       >
         <S.Details>
           <S.Description>
-            <S.Brand>Lamborghini</S.Brand>
-            <S.Name>Huracan</S.Name>
+            <S.Brand>{car.brand}</S.Brand>
+            <S.Name>{car.name}</S.Name>
           </S.Description>
 
           <S.Rent>
-            <S.Period>Ao dia</S.Period>
-            <S.Price>R$ 580</S.Price>
+            <S.Period>{car.rent.period}</S.Period>
+            <S.Price>R$ {car.rent.price}</S.Price>
           </S.Rent>
         </S.Details>
 
         <S.Accessories>
-          <Accessory name='380Km/h' icon={speedSvg} />
-          <Accessory name='3.2s' icon={accelerationSvg} />
-          <Accessory name='800 HP' icon={forceSvg} />
-          <Accessory name='Gasolina' icon={gasolineSvg} />
-          <Accessory name='Auto' icon={exchangeSvg} />
-          <Accessory name='2 pessoas' icon={peopleSvg} />
+          {
+            car.accessories.map(accessory => (
+              <Accessory
+                key={accessory.type}
+                name={accessory.name}
+                icon={getAccessoryIcon(accessory.type)}
+              />
+            ))
+          }
         </S.Accessories>
 
         <S.RentalPeriod>
@@ -74,7 +120,7 @@ export const SchedulingDetails: React.FC = () => {
 
           <S.DateInfo>
             <S.DateTitle>DE</S.DateTitle>
-            <S.DateValue>18/06/2021</S.DateValue>
+            <S.DateValue>{startDate}</S.DateValue>
           </S.DateInfo>
 
           <Feather
@@ -85,7 +131,7 @@ export const SchedulingDetails: React.FC = () => {
 
           <S.DateInfo>
             <S.DateTitle>ATÉ</S.DateTitle>
-            <S.DateValue>18/06/2021</S.DateValue>
+            <S.DateValue>{endDate}</S.DateValue>
           </S.DateInfo>
 
         </S.RentalPeriod>
@@ -93,14 +139,20 @@ export const SchedulingDetails: React.FC = () => {
         <S.RentalPrice>
           <S.RentalPriceLabel>TOTAL</S.RentalPriceLabel>
           <S.RentalPriceDetails>
-            <S.RentalPriceQuota>R$ 580 x3 diárias</S.RentalPriceQuota>
-            <S.RentalPriceTotal>R$ 2.900</S.RentalPriceTotal>
+            <S.RentalPriceQuota>{`R$ ${car.rent.price} x${dates.length} diárias`}</S.RentalPriceQuota>
+            <S.RentalPriceTotal>R$ {rentalTotal}</S.RentalPriceTotal>
           </S.RentalPriceDetails>
         </S.RentalPrice>
       </S.Content>
 
       <S.Footer>
-        <Button title='Alugar agora' color={colors.success} onPress={handleConfirmRental} />
+        <Button
+          title='Alugar agora'
+          color={colors.success}
+          onPress={handleConfirmRental}
+          loading={loading}
+          enabled={!loading}
+        />
       </S.Footer>
     </S.Container>
   );

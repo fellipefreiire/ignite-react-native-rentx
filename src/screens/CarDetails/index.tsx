@@ -3,35 +3,41 @@ import { Accessory } from '../../components/Accessory';
 import { BackButton } from '../../components/BackButton';
 import { ImageSlider } from '../../components/ImageSlider';
 
-import speedSvg from '../../assets/speed.svg'
-import accelerationSvg from '../../assets/acceleration.svg'
-import forceSvg from '../../assets/force.svg'
-import gasolineSvg from '../../assets/gasoline.svg'
-import exchangeSvg from '../../assets/exchange.svg'
-import peopleSvg from '../../assets/people.svg'
-
 import * as S from './styles'
 import { Button } from '../../components/Button';
-import { useNavigation } from '@react-navigation/native';
+import { StatusBar } from 'expo-status-bar';
+import { IRoutesParams } from '../../routes/stack.routes';
+import { StackScreenProps } from '@react-navigation/stack'
+import { getAccessoryIcon } from '../../utils/getAccessoryIcon';
 
-export const CarDetails: React.FC = () => {
-  const { navigate } = useNavigation()
+type Props = StackScreenProps<IRoutesParams, 'CarDetails'>;
+
+export const CarDetails: React.FC<Props> = ({ navigation, route }) => {
+  const car = route.params.car
 
   const handleConfirmRental = () => {
-    navigate('Scheduling')
+    navigation.navigate('Scheduling', {
+      car
+    })
+  }
+
+  const handleBack = () => {
+    navigation.goBack()
   }
 
   return (
     <S.Container>
+      <StatusBar
+        style='dark'
+        backgroundColor='transparent'
+        translucent
+      />
       <S.Header>
-        <BackButton onPress={() => { }} />
+        <BackButton onPress={handleBack} />
       </S.Header>
 
       <S.CarImages>
-        <ImageSlider imagesUrl={[
-          'https://www.pngmart.com/files/1/Audi-RS5-Red-PNG.png',
-          'https://www.pngkit.com/png/full/237-2375888_porsche-panamera-s.png',
-        ]} />
+        <ImageSlider imagesUrl={car.photos} />
       </S.CarImages>
 
       <S.Content
@@ -39,29 +45,29 @@ export const CarDetails: React.FC = () => {
       >
         <S.Details>
           <S.Description>
-            <S.Brand>Lamborghini</S.Brand>
-            <S.Name>Huracan</S.Name>
+            <S.Brand>{car.brand}</S.Brand>
+            <S.Name>{car.name}</S.Name>
           </S.Description>
 
           <S.Rent>
-            <S.Period>Ao dia</S.Period>
-            <S.Price>R$ 580</S.Price>
+            <S.Period>{car.rent.period}</S.Period>
+            <S.Price>R$ {car.rent.price}</S.Price>
           </S.Rent>
         </S.Details>
 
         <S.Accessories>
-          <Accessory name='380Km/h' icon={speedSvg} />
-          <Accessory name='3.2s' icon={accelerationSvg} />
-          <Accessory name='800 HP' icon={forceSvg} />
-          <Accessory name='Gasolina' icon={gasolineSvg} />
-          <Accessory name='Auto' icon={exchangeSvg} />
-          <Accessory name='2 pessoas' icon={peopleSvg} />
+          {
+            car.accessories.map(accessory => (
+              <Accessory
+                key={accessory.type}
+                name={accessory.name}
+                icon={getAccessoryIcon(accessory.type)}
+              />
+            ))
+          }
         </S.Accessories>
 
-        <S.About>
-          Este é um automóvel desportivo. Surgiu do lendário touro de lide indultado nan praça Real Maestranza de Sevilla. É um belíssimo carro para quem gosta de acelerar.
-        </S.About>
-
+        <S.About>{car.about}</S.About>
       </S.Content>
 
       <S.Footer>

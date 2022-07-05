@@ -1,41 +1,47 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'react-native';
+import { Ionicons } from '@expo/vector-icons'
 import Logo from '../../assets/logo.svg';
 import { RFValue } from 'react-native-responsive-fontsize'
 
 import * as S from './styles';
 import { Car } from '../../components/Car';
-import { useNavigation } from '@react-navigation/native';
+import { api } from '../../services/api';
+import { CarDTO } from '../../dtos/CarDTO';
+import { Loading } from '../../components/Loading';
+import { StackScreenProps } from '@react-navigation/stack';
+import { IRoutesParams } from '../../routes/stack.routes';
+import { useTheme } from 'styled-components';
 
-export const Home: React.FC = (): JSX.Element => {
-  const { navigate } = useNavigation()
+type Props = StackScreenProps<IRoutesParams, 'Home'>;
 
-  const carsData = [
-    {
-      brand: 'Audi',
-      name: 'RS 5 Coupé',
-      rent: {
-        period: 'ao dia',
-        price: 120
+export const Home: React.FC<Props> = ({ navigation }): JSX.Element => {
+  const [cars, setCars] = useState<CarDTO[]>([])
+  const [loading, setLoading] = useState(true)
+  const { colors } = useTheme()
 
-      },
-      thumbnail: 'https://www.pngmart.com/files/1/Audi-RS5-Red-PNG.png'
-    },
-    {
-      brand: 'Porsche',
-      name: 'Panamera',
-      rent: {
-        period: 'ao dia',
-        price: 340
-
-      },
-      thumbnail: 'https://www.pngkit.com/png/full/237-2375888_porsche-panamera-s.png'
-    },
-  ]
-
-  const handleCarDetails = () => {
-    navigate('CarDetails')
+  const handleCarDetails = (car: CarDTO) => {
+    navigation.navigate('CarDetails', { car })
   }
+
+  const handleOpenMyCars = () => {
+    navigation.navigate('MyCars')
+  }
+
+  useEffect(() => {
+    async function fetchCars() {
+      try {
+        const response = await api.get('/cars')
+        setCars(response.data)
+      } catch (err) {
+        console.log(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchCars()
+  }, [])
 
   return (
     <S.Container>
@@ -55,13 +61,22 @@ export const Home: React.FC = (): JSX.Element => {
           </S.TotalCars>
         </S.HeaderContent>
       </S.Header>
+      {loading ? <Loading /> :
+        <S.CarList
+          data={cars}
+          showsVerticalScrollIndicator={false}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => <Car data={item} onPress={() => handleCarDetails(item)} />}
+        />
+      }
 
-      <S.CarList
-        data={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
-        showsVerticalScrollIndicator={false}
-        keyExtractor={item => String(item)}
-        renderItem={({ item }) => <Car {...carsData[0]} onPress={handleCarDetails} />}
-      />
+      <S.MyCarsButton onPress={handleOpenMyCars}>
+        <Ionicons
+          name='ios-car-sport'
+          size={32}
+          color={colors.shape}
+        />
+      </S.MyCarsButton>
     </S.Container>
   );
 }
