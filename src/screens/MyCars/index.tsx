@@ -11,6 +11,7 @@ import { AntDesign } from '@expo/vector-icons'
 
 import * as S from './styles'
 import { Loading } from '../../components/Loading';
+import { LoadAnimation } from '../../components/LoadAnimation';
 
 interface CarProps {
   id: string
@@ -69,7 +70,7 @@ export const MyCars: React.FC<Props> = ({ navigation }) => {
         </S.Subtitle>
       </S.Header>
 
-      {loading ? <Loading /> :
+      {loading ? <LoadAnimation /> :
         <S.Content>
           <S.Appointments>
             <S.AppointmentTitle>

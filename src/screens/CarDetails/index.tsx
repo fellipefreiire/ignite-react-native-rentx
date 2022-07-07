@@ -9,11 +9,40 @@ import { StatusBar } from 'expo-status-bar';
 import { IRoutesParams } from '../../routes/stack.routes';
 import { StackScreenProps } from '@react-navigation/stack'
 import { getAccessoryIcon } from '../../utils/getAccessoryIcon';
+import Animated, { Extrapolate, interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
 type Props = StackScreenProps<IRoutesParams, 'CarDetails'>;
 
 export const CarDetails: React.FC<Props> = ({ navigation, route }) => {
   const car = route.params.car
+
+  const scrollY = useSharedValue(0)
+
+  const scrollHandler = useAnimatedScrollHandler(event => {
+    scrollY.value = event.contentOffset.y
+  })
+
+  const headerStyleAnimation = useAnimatedStyle(() => {
+    return {
+      height: interpolate(
+        scrollY.value,
+        [0, 200],
+        [200, 70],
+        Extrapolate.CLAMP
+      )
+    }
+  })
+
+  const sliderCarsStyleAnimation = useAnimatedStyle(() => {
+    return {
+      opacity: interpolate(
+        scrollY.value,
+        [0, 150],
+        [1, 0],
+        Extrapolate.CLAMP
+      )
+    }
+  })
 
   const handleConfirmRental = () => {
     navigation.navigate('Scheduling', {
@@ -32,16 +61,25 @@ export const CarDetails: React.FC<Props> = ({ navigation, route }) => {
         backgroundColor='transparent'
         translucent
       />
-      <S.Header>
-        <BackButton onPress={handleBack} />
-      </S.Header>
 
-      <S.CarImages>
-        <ImageSlider imagesUrl={car.photos} />
-      </S.CarImages>
+      <S.HeaderWrapper
+        style={[headerStyleAnimation]}
+      >
+        <S.Header>
+          <BackButton onPress={handleBack} />
+        </S.Header>
+
+        <S.CarImages style={sliderCarsStyleAnimation}>
+          {/* <Animated.View style={sliderCarsStyleAnimation}> */}
+          <ImageSlider imagesUrl={car.photos} />
+          {/* </Animated.View> */}
+        </S.CarImages>
+      </S.HeaderWrapper>
 
       <S.Content
         showsVerticalScrollIndicator={false}
+        onScroll={scrollHandler}
+        scrollEventThrottle={16}
       >
         <S.Details>
           <S.Description>
@@ -67,12 +105,18 @@ export const CarDetails: React.FC<Props> = ({ navigation, route }) => {
           }
         </S.Accessories>
 
-        <S.About>{car.about}</S.About>
+        <S.About>
+          {car.about}
+          {car.about}
+          {car.about}
+          {car.about}
+          {car.about}
+        </S.About>
       </S.Content>
 
       <S.Footer>
         <Button title='Escolher Período do aluguel' onPress={handleConfirmRental} />
       </S.Footer>
-    </S.Container>
+    </S.Container >
   );
 }

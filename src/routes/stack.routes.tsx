@@ -8,8 +8,10 @@ import { SchedulingDetails } from '../screens/SchedulingDetails';
 import { SchedulingComplete } from '../screens/SchedulingComplete';
 import { CarDTO } from '../dtos/CarDTO';
 import { MyCars } from '../screens/MyCars';
+import { Splash } from '../screens/Splash';
 
 export type IRoutesParams = {
+  Splash: undefined
   Home: undefined
   CarDetails: { car: CarDTO }
   Scheduling: { car: CarDTO }
@@ -26,10 +28,19 @@ export const StackRoutes: React.FC = (): JSX.Element => {
       screenOptions={{
         headerShown: false
       }}
+      initialRouteName='Splash'
     >
+      <Screen
+        name='Splash'
+        component={Splash}
+      />
+
       <Screen
         name='Home'
         component={Home}
+        options={{
+          gestureEnabled: false,
+        }}
       />
 
       <Screen
