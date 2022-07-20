@@ -5,10 +5,13 @@ import { Home } from '../screens/Home';
 import { CarDetails } from '../screens/CarDetails';
 import { Scheduling } from '../screens/Scheduling';
 import { SchedulingDetails } from '../screens/SchedulingDetails';
-import { SchedulingComplete } from '../screens/SchedulingComplete';
+import { Confirmation } from '../screens/Confirmation';
 import { CarDTO } from '../dtos/CarDTO';
 import { MyCars } from '../screens/MyCars';
 import { Splash } from '../screens/Splash';
+import { SignIn } from '../screens/SignIn';
+import { SignUpFirstStep } from '../screens/SignUp/SignUpFirstStep';
+import { SignUpSecondStep } from '../screens/SignUp/SignUpSecondStep';
 
 export type IRoutesParams = {
   Splash: undefined
@@ -16,8 +19,15 @@ export type IRoutesParams = {
   CarDetails: { car: CarDTO }
   Scheduling: { car: CarDTO }
   SchedulingDetails: { car: CarDTO, dates: string[] }
-  SchedulingComplete: undefined
+  Confirmation: {
+    title: string
+    message: string
+    nextScreenRoute: 'Splash' | 'Home' | 'CarDetails' | 'Scheduling' | 'SchedulingDetails' | 'Confirmation' | 'MyCars' | 'SignIn' | 'SignUpFirstStep' | 'SignUpSecondStep'
+  }
   MyCars: undefined
+  SignIn: undefined
+  SignUpFirstStep: undefined
+  SignUpSecondStep: { user: { name: string, email: string, driverLicense: string } }
 }
 
 const { Navigator, Screen } = createStackNavigator<IRoutesParams>()
@@ -30,9 +40,24 @@ export const StackRoutes: React.FC = (): JSX.Element => {
       }}
       initialRouteName='Splash'
     >
-      <Screen
+      {/* <Screen
         name='Splash'
         component={Splash}
+      /> */}
+
+      <Screen
+        name='SignIn'
+        component={SignIn}
+      />
+
+      <Screen
+        name='SignUpFirstStep'
+        component={SignUpFirstStep}
+      />
+
+      <Screen
+        name='SignUpSecondStep'
+        component={SignUpSecondStep}
       />
 
       <Screen
@@ -59,8 +84,8 @@ export const StackRoutes: React.FC = (): JSX.Element => {
       />
 
       <Screen
-        name='SchedulingComplete'
-        component={SchedulingComplete}
+        name='Confirmation'
+        component={Confirmation}
       />
 
       <Screen

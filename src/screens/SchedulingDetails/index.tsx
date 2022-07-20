@@ -59,8 +59,11 @@ export const SchedulingDetails: React.FC<Props> = ({ navigation, route }) => {
       setLoading(false)
       Alert.alert('Não foi possível confirmar o agendamento.')
     }
-    navigation.navigate('SchedulingComplete')
-
+    navigation.navigate('Confirmation', {
+      title: 'Carro Alugado!',
+      message: 'Agora você só precisa ir\naté a concessionária da RENTX\npegar o seu automóvel',
+      nextScreenRoute: 'Home'
+    })
   }
 
   const handleBack = () => {

@@ -9,6 +9,7 @@ interface IButtonProps extends RectButtonProps {
   title: string;
   color?: string;
   loading?: boolean;
+  light?: boolean;
 }
 
 export const Button: React.FC<IButtonProps> = ({
@@ -16,6 +17,7 @@ export const Button: React.FC<IButtonProps> = ({
   color,
   enabled = true,
   loading = false,
+  light = false,
   ...rest
 }): JSX.Element => {
   const { colors } = useTheme()
@@ -30,7 +32,7 @@ export const Button: React.FC<IButtonProps> = ({
       {
         loading ?
           <ActivityIndicator color={colors.shape} /> :
-          <S.Title>{title}</S.Title>
+          <S.Title light={light}>{title}</S.Title>
       }
     </S.Container>
   )

@@ -6,6 +6,10 @@ interface IButtonProps extends RectButtonProps {
   color?: string;
 }
 
+interface ITitleProps {
+  light: boolean;
+}
+
 export const Container = styled(RectButton) <IButtonProps>`
   width: 100%;
 
@@ -15,10 +19,13 @@ export const Container = styled(RectButton) <IButtonProps>`
   justify-content: center;
 
   background-color: ${({ color, theme: { colors } }) => color ? color : colors.main};
+
+  margin-bottom: ${RFValue(8)}px;
 `
 
-export const Title = styled.Text`
+export const Title = styled.Text<ITitleProps>`
   font-family: ${({ theme: { fonts } }) => fonts.primary_500};
   font-size: ${RFValue(15)}px;
-  color: ${({ theme: { colors } }) => colors.shape};
+  color: ${({ theme: { colors }, light }) =>
+    light ? colors.header : colors.shape};
 `

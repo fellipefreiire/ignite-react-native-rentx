@@ -7,15 +7,23 @@ import DoneSvg from '../../assets/done.svg'
 import * as S from './styles'
 import { RFValue } from 'react-native-responsive-fontsize';
 import { ConfirmButton } from '../../components/ConfirmButton';
-import { useNavigation } from '@react-navigation/native';
+import { StackScreenProps } from '@react-navigation/stack';
+import { IRoutesParams } from '../../routes/stack.routes';
 
-export const SchedulingComplete: React.FC = () => {
+type RootProps = StackScreenProps<IRoutesParams, 'Confirmation'>;
+
+interface ConfirmationProps extends RootProps {
+  title: string
+  message: string
+  nextScreenRoute: 'Splash' | 'Home' | 'CarDetails' | 'Scheduling' | 'SchedulingDetails' | 'Confirmation' | 'MyCars' | 'SignIn' | 'SignUpFirstStep' | 'SignUpSecondStep'
+}
+
+export const Confirmation: React.FC<RootProps> = ({ route, navigation }) => {
   const { width } = useWindowDimensions()
-
-  const { navigate } = useNavigation()
+  const { nextScreenRoute, title, message } = route.params
 
   const handleConfirmRental = () => {
-    navigate('Home')
+    navigation.navigate(nextScreenRoute)
   }
 
   return (
@@ -31,10 +39,10 @@ export const SchedulingComplete: React.FC = () => {
 
       <S.Content>
         <DoneSvg width={RFValue(80)} height={RFValue(80)} />
-        <S.Title>Carro Alugado</S.Title>
+        <S.Title>{title}</S.Title>
 
         <S.Message>
-          Agora você só precisa ir {'\n'}até a concessionária da RENTX {'\n'} pegar seu automóvel.
+          {message}
         </S.Message>
       </S.Content>
 
