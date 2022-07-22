@@ -9,7 +9,8 @@ import * as Yup from 'yup'
 
 import * as S from './styles'
 import { StackScreenProps } from '@react-navigation/stack';
-import { IRoutesParams } from '../../routes/stack.routes';
+import { useAuth } from '../../hooks/auth';
+import { IRoutesParams } from '../../routes/interface';
 
 type Props = StackScreenProps<IRoutesParams, 'SignIn'>;
 
@@ -17,6 +18,8 @@ export const SignIn: React.FC<Props> = ({ navigation }) => {
   const { colors } = useTheme()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+
+  const { signIn } = useAuth()
 
   async function handleSignIn() {
     try {
@@ -30,6 +33,8 @@ export const SignIn: React.FC<Props> = ({ navigation }) => {
 
       await schema.validate({ email, password })
       Alert.alert('Tudo certo!')
+
+      signIn({ email, password })
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         Alert.alert('Opa', err.message)
@@ -88,7 +93,7 @@ export const SignIn: React.FC<Props> = ({ navigation }) => {
             <Button
               title='Login'
               onPress={handleSignIn}
-              enabled={false}
+              enabled={true}
               loading={false}
             />
 

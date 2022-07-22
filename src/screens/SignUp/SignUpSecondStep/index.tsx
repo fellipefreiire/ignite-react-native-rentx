@@ -7,7 +7,8 @@ import { BackButton } from '../../../components/BackButton';
 import { Bullet } from '../../../components/Bullet';
 import { Button } from '../../../components/Button';
 import { Input } from '../../../components/Input';
-import { IRoutesParams } from '../../../routes/stack.routes';
+import { IRoutesParams } from '../../../routes/interface';
+import { api } from '../../../services/api';
 
 import * as S from './styles'
 
@@ -24,18 +25,29 @@ export const SignUpSecondStep: React.FC<Props> = ({ route, navigation }) => {
     navigation.goBack()
   }
 
-  function handleRegister() {
+  async function handleRegister() {
     if (!password || !passwordConfirm) return Alert
       .alert('Informe a senha e a confirmação')
 
     if (password !== passwordConfirm) return Alert
       .alert('As senhas devem ser iguais')
 
-    navigation.navigate('Confirmation', {
-      title: 'Conta criada!',
-      message: 'Agora é só fazer login\ne aproveitar.',
-      nextScreenRoute: 'SignIn'
-    })
+    try {
+      await api.post('/users', {
+        name: user.name,
+        email: user.email,
+        password,
+        driver_license: user.driverLicense
+      })
+  
+      navigation.navigate('Confirmation', {
+        title: 'Conta criada!',
+        message: 'Agora é só fazer login\ne aproveitar.',
+        nextScreenRoute: 'SignIn'
+      })
+    } catch(err) {
+      Alert.alert('Opa', 'Não foi possível cadastrar!')
+    }
   }
 
   return (

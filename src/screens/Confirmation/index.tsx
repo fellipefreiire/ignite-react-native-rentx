@@ -8,7 +8,7 @@ import * as S from './styles'
 import { RFValue } from 'react-native-responsive-fontsize';
 import { ConfirmButton } from '../../components/ConfirmButton';
 import { StackScreenProps } from '@react-navigation/stack';
-import { IRoutesParams } from '../../routes/stack.routes';
+import { IRoutesParams } from '../../routes/interface';
 
 type RootProps = StackScreenProps<IRoutesParams, 'Confirmation'>;
 

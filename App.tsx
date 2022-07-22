@@ -16,6 +16,7 @@ import { ThemeProvider } from 'styled-components'
 import { theme } from './src/styles/theme';
 
 import { Routes } from './src/routes';
+import { AuthProvider } from './src/hooks/auth';
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -53,7 +54,9 @@ export default function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Routes onReady={onLayoutRootView} />
+      <AuthProvider>
+        <Routes onReady={onLayoutRootView} />
+      </AuthProvider>
     </ThemeProvider>
   );
 }

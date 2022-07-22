@@ -6,10 +6,10 @@ import { ImageSlider } from '../../components/ImageSlider';
 import * as S from './styles'
 import { Button } from '../../components/Button';
 import { StatusBar } from 'expo-status-bar';
-import { IRoutesParams } from '../../routes/stack.routes';
 import { StackScreenProps } from '@react-navigation/stack'
 import { getAccessoryIcon } from '../../utils/getAccessoryIcon';
 import Animated, { Extrapolate, interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
+import { IRoutesParams } from '../../routes/interface';
 
 type Props = StackScreenProps<IRoutesParams, 'CarDetails'>;
 
@@ -88,8 +88,8 @@ export const CarDetails: React.FC<Props> = ({ navigation, route }) => {
           </S.Description>
 
           <S.Rent>
-            <S.Period>{car.rent.period}</S.Period>
-            <S.Price>R$ {car.rent.price}</S.Price>
+            <S.Period>{car.period}</S.Period>
+            <S.Price>R$ {car.price}</S.Price>
           </S.Rent>
         </S.Details>
 
@@ -106,10 +106,6 @@ export const CarDetails: React.FC<Props> = ({ navigation, route }) => {
         </S.Accessories>
 
         <S.About>
-          {car.about}
-          {car.about}
-          {car.about}
-          {car.about}
           {car.about}
         </S.About>
       </S.Content>

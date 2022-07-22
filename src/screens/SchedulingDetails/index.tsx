@@ -9,12 +9,12 @@ import { Button } from '../../components/Button';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useTheme } from 'styled-components';
 import { StackScreenProps } from '@react-navigation/stack';
-import { IRoutesParams } from '../../routes/stack.routes';
 import { Alert, StatusBar } from 'react-native';
 import { getAccessoryIcon } from '../../utils/getAccessoryIcon';
 import { format } from 'date-fns';
 import { getPlatformDate } from '../../utils/getPlatformDate';
 import { api } from '../../services/api';
+import { IRoutesParams } from '../../routes/interface';
 
 type Props = StackScreenProps<IRoutesParams, 'SchedulingDetails'>;
 

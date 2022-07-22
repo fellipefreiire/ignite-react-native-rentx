@@ -5,13 +5,13 @@ import { useTheme } from 'styled-components';
 import { BackButton } from '../../components/BackButton';
 import { Car } from '../../components/Car';
 import { CarDTO } from '../../dtos/CarDTO';
-import { IRoutesParams } from '../../routes/stack.routes';
 import { api } from '../../services/api';
 import { AntDesign } from '@expo/vector-icons'
 
 import * as S from './styles'
 import { Loading } from '../../components/Loading';
 import { LoadAnimation } from '../../components/LoadAnimation';
+import { IRoutesParams } from '../../routes/interface';
 
 interface CarProps {
   id: string

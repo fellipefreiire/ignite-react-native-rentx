@@ -9,9 +9,9 @@ import * as S from './styles'
 import { Button } from '../../components/Button';
 import { Calendar, DayProps, generateInterval, IMarkedDateProps } from '../../components/Calendar';
 import { StackScreenProps } from '@react-navigation/stack';
-import { IRoutesParams } from '../../routes/stack.routes';
 import { format } from 'date-fns';
 import { getPlatformDate } from '../../utils/getPlatformDate';
+import { IRoutesParams } from '../../routes/interface';
 
 type Props = StackScreenProps<IRoutesParams, 'Scheduling'>;
 

@@ -11,7 +11,7 @@ import Animated, {
 
 import BrandSvg from '../../assets/brand.svg'
 import LogoSvg from '../../assets/logo.svg'
-import { IRoutesParams } from '../../routes/stack.routes';
+import { IRoutesParams } from '../../routes/interface';
 
 import * as S from './styles'
 
@@ -61,7 +61,7 @@ export const Splash: React.FC<Props> = ({ navigation }) => {
   })
 
   const startApp = () => {
-    navigation.navigate('Home')
+    navigation.navigate('SignIn')
   }
 
   useEffect(() => {

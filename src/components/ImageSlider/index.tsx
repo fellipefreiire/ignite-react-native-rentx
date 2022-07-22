@@ -5,7 +5,10 @@ import { Bullet } from '../Bullet';
 import * as S from './styles'
 
 interface IImageSliderProps {
-  imagesUrl: string[]
+  imagesUrl: {
+    id: string
+    photo: string
+  }[]
 }
 
 interface ChangeImageProps {
@@ -27,9 +30,9 @@ export const ImageSlider: React.FC<IImageSliderProps> = ({
     <S.Container>
       <S.ImageIndexes>
         {
-          imagesUrl.map((_, index) => (
+          imagesUrl.map((item, index) => (
             <Bullet
-              key={String(index)}
+              key={item.id}
               active={index === imageIndex}
             />
           ))
@@ -38,11 +41,11 @@ export const ImageSlider: React.FC<IImageSliderProps> = ({
 
       <FlatList
         data={imagesUrl}
-        keyExtractor={key => key}
+        keyExtractor={item => item.id}
         renderItem={({ item }) => (
           <S.CarImageWrapper>
             <S.CarImage
-              source={{ uri: item }}
+              source={{ uri: item.photo }}
               resizeMode='contain'
             />
           </S.CarImageWrapper>
