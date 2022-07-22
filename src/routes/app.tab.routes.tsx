@@ -20,9 +20,7 @@ export const AppTabRoutes: React.FC = (): JSX.Element => {
   return (
     <Navigator
       screenOptions={{
-        headerShown: false
-      }}
-      defaultScreenOptions={{
+        headerShown: false,
         tabBarActiveTintColor: colors.main,
         tabBarInactiveTintColor: colors.text_detail,
         tabBarShowLabel: false,
@@ -37,9 +35,9 @@ export const AppTabRoutes: React.FC = (): JSX.Element => {
         name='Home'
         component={AppStackRoutes}
         options={{
-          tabBarIcon: (({ color }) => {
+          tabBarIcon: (({ color }) => (
             <HomeSvg width={24} height={24} fill={color} />
-          })
+          ))
         }}
       />
 
@@ -47,9 +45,9 @@ export const AppTabRoutes: React.FC = (): JSX.Element => {
         name='MyCars'
         component={MyCars}
         options={{
-          tabBarIcon: (({ color }) => {
+          tabBarIcon: (({ color }) => (
             <CarSvg width={24} height={24} fill={color} />
-          })
+          ))
         }}
       />
 
