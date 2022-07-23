@@ -17,10 +17,10 @@ export const AppStackRoutes: React.FC = (): JSX.Element => {
       screenOptions={{
         headerShown: false
       }}
-      initialRouteName='Home'
+      initialRouteName='HomeScreen'
     >
       <Screen
-        name='Home'
+        name='HomeScreen'
         component={Home}
       />
 

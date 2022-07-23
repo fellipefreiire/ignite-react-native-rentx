@@ -3,6 +3,7 @@ import { CarDTO } from "../dtos/CarDTO"
 export type IRoutesParams = {
   Splash: undefined
   Home: undefined
+  HomeScreen: undefined
   CarDetails: { car: CarDTO }
   Scheduling: { car: CarDTO }
   SchedulingDetails: { car: CarDTO, dates: string[] }
@@ -15,4 +16,5 @@ export type IRoutesParams = {
   SignIn: undefined
   SignUpFirstStep: undefined
   SignUpSecondStep: { user: { name: string, email: string, driverLicense: string } }
+  Profile: undefined
 }

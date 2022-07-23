@@ -14,7 +14,7 @@ export const Routes: React.FC<IRoutesProps> = ({ onReady }) => {
 
   return (
     <NavigationContainer onReady={onReady}>
-      {user ? <AppTabRoutes /> : <AuthRoutes />}
+      {user.id ? <AppTabRoutes /> : <AuthRoutes />}
     </NavigationContainer>
   );
 }

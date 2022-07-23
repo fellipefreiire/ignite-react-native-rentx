@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { StatusBar } from 'react-native';
+import { Alert, StatusBar } from 'react-native';
 
 import Logo from '../../assets/logo.svg';
 import { RFValue } from 'react-native-responsive-fontsize'
+import { useNetInfo } from '@react-native-community/netinfo'
 
 import * as S from './styles';
 import { Car } from '../../components/Car';
@@ -19,24 +20,44 @@ export const Home: React.FC<Props> = ({ navigation }): JSX.Element => {
   const [cars, setCars] = useState<CarDTO[]>([])
   const [loading, setLoading] = useState(true)
 
+  const netInfo = useNetInfo()
+
   const handleCarDetails = (car: CarDTO) => {
     navigation.navigate('CarDetails', { car })
   }
 
   useEffect(() => {
+    let isMounted = true
+
     async function fetchCars() {
       try {
         const response = await api.get('/cars')
-        setCars(response.data)
+        if (isMounted) {
+          setCars(response.data)
+        }
       } catch (err) {
         console.log(err)
       } finally {
-        setLoading(false)
+        if (isMounted) {
+          setLoading(false)
+        }
       }
     }
 
     fetchCars()
+
+    return () => {
+      isMounted = false
+    }
   }, [])
+
+  useEffect(() => {
+    if(netInfo.isConnected) {
+      Alert.alert('Você está On-line')
+    } else {
+      Alert.alert('Você está Off-line')
+    }
+  }, [netInfo.isConnected])
 
   return (
     <S.Container>
