@@ -23,6 +23,7 @@ interface IAuthContextData {
   signIn: (credentials: ISignInCredentials) => Promise<void>
   signOut: () => Promise<void>
   updateUser: (user: IUser) => Promise<void>
+  loading: boolean
 }
 
 interface IAuthProviderProps {
@@ -33,6 +34,7 @@ const AuthContext = createContext<IAuthContextData>({} as IAuthContextData)
 
 export const AuthProvider = ({ children }: IAuthProviderProps) => {
   const [data, setData] = useState<IUser>({} as IUser)
+  const [loading, setLoading] = useState(true)
 
   async function signIn({ email, password }: ISignInCredentials) {
     try {
@@ -105,14 +107,15 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
         const userData = response[0]._raw as unknown as User
         api.defaults.headers.common['Authorization'] = `Bearer ${userData.token}`
         setData(userData)
+        setLoading(false)
       }
-
     }
+
     loadUserData()
   })
 
   return (
-    <AuthContext.Provider value={{ user: data, signIn, signOut, updateUser }}>
+    <AuthContext.Provider value={{ user: data, signIn, signOut, updateUser, loading }}>
       {children}
     </AuthContext.Provider>
   )

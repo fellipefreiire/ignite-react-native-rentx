@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Feather } from '@expo/vector-icons'
 import { Accessory } from '../../components/Accessory';
 import { BackButton } from '../../components/BackButton';
@@ -15,46 +15,35 @@ import { format } from 'date-fns';
 import { getPlatformDate } from '../../utils/getPlatformDate';
 import { api } from '../../services/api';
 import { IRoutesParams } from '../../routes/interface';
+import { CarDTO } from '../../dtos/CarDTO';
+import { useNetInfo } from '@react-native-community/netinfo'
 
 type Props = StackScreenProps<IRoutesParams, 'SchedulingDetails'>;
 
 export const SchedulingDetails: React.FC<Props> = ({ navigation, route }) => {
+  const [carUpdated, setCarUpdated] = useState<CarDTO>({} as CarDTO)
   const [loading, setLoading] = useState(false)
+
   const { colors } = useTheme()
+  const netInfo = useNetInfo()
 
   const { car, dates } = route.params
 
-  const rentalTotal = Number(dates.length * car.rent.price)
+  const rentalTotal = Number(dates.length * car.price)
   const startDate = format(getPlatformDate(new Date(dates[0])), 'dd/MM/yyyy')
   const endDate = format(getPlatformDate(new Date(dates[dates.length - 1])), 'dd/MM/yyyy')
 
   const handleConfirmRental = async () => {
     setLoading(true)
 
-    const schedulesByCar = await api.get(`/schedules_bycars/${car.id}`)
-
-    const unavailable_dates = [
-      ...schedulesByCar.data.unavailable_dates,
-      ...dates,
-    ]
-
     try {
-      await api.post(`/schedules_byuser`, {
+      await api.post(`/rentals`, {
         user_id: 1,
-        car,
-        startDate,
-        endDate
+        car_id: car.id,
+        startDate: new Date(dates[0]),
+        endDate: new Date(dates[dates.length - 1]),
+        total: rentalTotal
       })
-    } catch (err) {
-      console.log(err)
-    }
-
-    try {
-      await api.put(`/schedules_bycars/${car.id}`, {
-        id: car.id,
-        unavailable_dates
-      })
-
     } catch (err) {
       setLoading(false)
       Alert.alert('Não foi possível confirmar o agendamento.')
@@ -70,6 +59,15 @@ export const SchedulingDetails: React.FC<Props> = ({ navigation, route }) => {
     navigation.goBack()
   }
 
+  useEffect(() => {
+    async function fetchCarUpdated() {
+      const response = await api.get(`/cars/${car.id}`)
+      setCarUpdated(response.data)
+    }
+
+    if (netInfo.isConnected === true) fetchCarUpdated()
+  }, [netInfo.isConnected])
+
   return (
     <S.Container>
       <StatusBar
@@ -82,7 +80,10 @@ export const SchedulingDetails: React.FC<Props> = ({ navigation, route }) => {
       </S.Header>
 
       <S.CarImages>
-        <ImageSlider imagesUrl={car.photos} />
+        <ImageSlider imagesUrl={
+          !!carUpdated.photos ?
+            carUpdated.photos : [{ id: car.thumbnail, photo: car.thumbnail }]
+        } />
       </S.CarImages>
 
       <S.Content
@@ -95,22 +96,25 @@ export const SchedulingDetails: React.FC<Props> = ({ navigation, route }) => {
           </S.Description>
 
           <S.Rent>
-            <S.Period>{car.rent.period}</S.Period>
-            <S.Price>R$ {car.rent.price}</S.Price>
+            <S.Period>{car.period}</S.Period>
+            <S.Price>R$ {car.price}</S.Price>
           </S.Rent>
         </S.Details>
 
-        <S.Accessories>
-          {
-            car.accessories.map(accessory => (
-              <Accessory
-                key={accessory.type}
-                name={accessory.name}
-                icon={getAccessoryIcon(accessory.type)}
-              />
-            ))
-          }
-        </S.Accessories>
+        {
+          carUpdated.accessories &&
+          <S.Accessories>
+            {
+              carUpdated.accessories.map(accessory => (
+                <Accessory
+                  key={accessory.type}
+                  name={accessory.name}
+                  icon={getAccessoryIcon(accessory.type)}
+                />
+              ))
+            }
+          </S.Accessories>
+        }
 
         <S.RentalPeriod>
           <S.CalendarIcon>
@@ -142,7 +146,7 @@ export const SchedulingDetails: React.FC<Props> = ({ navigation, route }) => {
         <S.RentalPrice>
           <S.RentalPriceLabel>TOTAL</S.RentalPriceLabel>
           <S.RentalPriceDetails>
-            <S.RentalPriceQuota>{`R$ ${car.rent.price} x${dates.length} diárias`}</S.RentalPriceQuota>
+            <S.RentalPriceQuota>{`R$ ${car.price} x${dates.length} diárias`}</S.RentalPriceQuota>
             <S.RentalPriceTotal>R$ {rentalTotal}</S.RentalPriceTotal>
           </S.RentalPriceDetails>
         </S.RentalPrice>

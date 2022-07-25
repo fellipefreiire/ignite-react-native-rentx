@@ -17,6 +17,7 @@ import { theme } from './src/styles/theme';
 
 import { Routes } from './src/routes';
 import { AuthProvider } from './src/hooks/auth';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -53,10 +54,12 @@ export default function App() {
   }
 
   return (
-    <ThemeProvider theme={theme}>
-      <AuthProvider>
-        <Routes onReady={onLayoutRootView} />
-      </AuthProvider>
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider theme={theme}>
+        <AuthProvider>
+          <Routes onReady={onLayoutRootView} />
+        </AuthProvider>
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }

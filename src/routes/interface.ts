@@ -1,12 +1,12 @@
-import { CarDTO } from "../dtos/CarDTO"
+import { Car } from "../databases/watermelon/models/Car"
 
 export type IRoutesParams = {
   Splash: undefined
   Home: undefined
   HomeScreen: undefined
-  CarDetails: { car: CarDTO }
-  Scheduling: { car: CarDTO }
-  SchedulingDetails: { car: CarDTO, dates: string[] }
+  CarDetails: { car: Car }
+  Scheduling: { car: Car }
+  SchedulingDetails: { car: Car, dates: string[] }
   Confirmation: {
     title: string
     message: string

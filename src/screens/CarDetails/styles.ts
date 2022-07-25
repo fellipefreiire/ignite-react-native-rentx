@@ -108,3 +108,10 @@ export const Footer = styled.View`
   background-color: ${({ theme: { colors } }) => colors.background_secondary};
   padding: ${RFValue(24)}px ${RFValue(24)}px ${RFValue(getBottomSpace() + 24)}px;
 `
+
+export const OfflineInfo = styled.Text`
+  font-family: ${({ theme: { fonts } }) => fonts.primary_400};
+  color: ${({ theme: { colors } }) => colors.main};
+  font-size: ${RFValue(10)}px;
+  text-align: center;
+`

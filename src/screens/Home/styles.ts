@@ -3,7 +3,7 @@ import { FlatList, FlatListProps } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
 import { RFValue } from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native'
-import { CarDTO } from '../../dtos/CarDTO';
+import { Car } from '../../databases/watermelon/models/Car';
 
 const ButtonAnimated = Animated.createAnimatedComponent(RectButton)
 
@@ -35,7 +35,7 @@ export const TotalCars = styled.Text`
   color: ${({ theme: { colors } }) => colors.text};
 `
 
-export const CarList = styled(FlatList as new (props: FlatListProps<CarDTO>) => FlatList<CarDTO>)`
+export const CarList = styled(FlatList as new (props: FlatListProps<Car>) => FlatList<Car>)`
   padding: 24px;
 `
 
